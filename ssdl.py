@@ -27,7 +27,10 @@ def download(url):
             img_filenames.append(filename)
 
         print('converting to PDF')
-        dest_filename = os.path.join(dirname, doc.title.string + '.pdf')
+        title_elem = doc.find('a', class_='j-parent-title')
+        if title_elem is None:
+            title_elem = doc.find('span', class_='j-title-breadcrumb')
+        dest_filename = os.path.join(dirname, '{}.pdf'.format(title_elem.string))
         subprocess.call(['convert'] + img_filenames + [dest_filename])
 
         author, title = re.match('https?://www.slideshare.net/([^/]+)/([^/]+)(?:/.+)?', url).groups()
