@@ -10,7 +10,7 @@ import bs4
 import tqdm
 
 def download(url):
-    img_url_re = re.compile('.+/.+-([0-9]+)-1024\..+\?cb=.+$')
+    img_url_re = re.compile('https?://image.slidesharecdn.com/[^/]+/[^/]+/.+-([0-9]+)-[0-9]+\..+')
 
     print('retrieving image list')
     doc = bs4.BeautifulSoup(urllib.request.urlopen(url), 'lxml')
@@ -30,7 +30,7 @@ def download(url):
         dest_filename = os.path.join(dirname, doc.title.string + '.pdf')
         subprocess.call(['convert'] + img_filenames + [dest_filename])
 
-        author, title = re.match('.+/(.+)/(.+)/?', url).groups()
+        author, title = re.match('https?://www.slideshare.net/([^/]+)/([^/]+)(?:/.+)?', url).groups()
         final_filename = '{}_{}.pdf'.format(author, title)
         os.rename(dest_filename, os.path.join(os.curdir, final_filename))
         print('saved to {}'.format(final_filename))
